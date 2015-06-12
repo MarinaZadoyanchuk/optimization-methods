@@ -1,7 +1,6 @@
 
-var math = require('mathjs');
-var _math = {};
-var eps = 0.001;
+
+window._math = {};
 
 _math.golden_section = function(f, a, b, n) {
   var phi = 1.618;
@@ -94,8 +93,6 @@ _math.simpson = function(f, h) {
   }
   return h * sum / 3;
 };
-
-module.exports = _math;
 
 var test = function() {
   var f = function(x) {

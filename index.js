@@ -1,7 +1,4 @@
 
-var math = require('mathjs');
-var _math = require('./math.js');
-
 var task1 = {
   a: function(alpha) {
     return [[2, 0], [alpha, 2]];
