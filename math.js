@@ -22,19 +22,49 @@ _math.golden_section = function(f, a, b, n) {
   return result;
 };
 
-_math.gradient_descent = function(gradient, x0, n) {
-  var lambda = 1;
+_math.gradient_descent = function(func, gradient, x0, n) {
   for (var i = 0; i < n; ++i) {
     var g = gradient(x0);
     var f = function(lambda) {
-      return math.subtract(x0, math.multiply(lambda, g));
+      return func(math.subtract(x0, math.multiply(lambda, g)));
     };
-    x1 = f(_math.golden_section(f, 0, 1, n / 2));
-
+    var lambda = _math.golden_section(f, 0, 1, n / 2);
+    x1 = math.subtract(x0, math.multiply(lambda, g));
     x0 = x1;
   }
   return x0;
 };
+
+_math.vector_square = function(vector) {
+  return math.multiply(vector.map(function(v) { return [v]; }), [vector]);
+}
+
+_math.dfp = function(func, gradient, x0, n) {
+  var g_x0 = gradient(x0);
+  for (var i = 0; i < n; ++i) {
+    var d_matrix = math.eye(x0.length || 1);
+    for (var j = 0; j < x0.length || 1; ++j) {
+      var d = math.multiply(-1, math.multiply(d_matrix, g_x0));
+      var f = function(lambda) {
+        return func(math.add(x0, math.multiply(lambda, d)))
+      };
+      var lambda = _math.golden_section(f, 0, 1, n / 2);
+      x1 = math.add(x0, math.multiply(lambda, d));
+      var g_x1 = gradient(x1);
+
+      var p = math.multiply(lambda, d);
+      var q = math.subtract(g_x1, g_x0);
+      var d_next = d_matrix;
+      d_next = math.add(d_next, math.multiply(_math.vector_square(p), 1 / math.multiply(p, p)));
+      d_next = math.subtract(d_next, math.multiply(math.multiply(math.multiply(d_matrix, _math.vector_square(q)), d_matrix), 1 / math.multiply(q, math.multiply(d_next, q))));
+
+      x0 = x1;
+      g_x0 = g_x1;
+      d_matrix = d_next;
+    }
+  }
+  return x0;
+}
 
 _math.runge_kutta = function(f, x0, xn, y0, n) {
   var  h = (xn - x0) / n;

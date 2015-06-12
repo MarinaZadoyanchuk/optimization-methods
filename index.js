@@ -84,7 +84,7 @@ var _quality_diff = function(alpha) {
 }
 
 var main = function() {
-  return _math.gradient_descent(quality_diff, 10, 100);
+  return _math.gradient_descent(quality, quality_diff, 10, 100);
 }
 
 console.log(main());
