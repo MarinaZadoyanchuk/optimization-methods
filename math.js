@@ -35,20 +35,21 @@ _math.gradient_descent = function(func, gradient, x0, n) {
 };
 
 _math.vector_square = function(vector) {
-  return math.multiply(vector.map(function(v) { return [v]; }), [vector]);
+  return math.multiply(vector, vector);
 }
 
 _math.dfp = function(func, gradient, x0, n) {
+    console.log(x0.toString());
   var g_x0 = gradient(x0);
   for (var i = 0; i < n; ++i) {
-    var d_matrix = math.eye(x0.length || 1);
-    for (var j = 0; j < x0.length || 1; ++j) {
+    var d_matrix = math.eye(x0.length || 1).toArray();
+    for (var j = 0; j < (x0.length || 1); ++j) {
       var d = math.multiply(-1, math.multiply(d_matrix, g_x0));
       var f = function(lambda) {
-        return func(math.add(x0, math.multiply(lambda, d)))
+        return func(math.add(x0, math.squeeze(math.multiply(lambda, d))))
       };
       var lambda = _math.golden_section(f, 0, 1, n / 2);
-      x1 = math.add(x0, math.multiply(lambda, d));
+      x1 = math.add(x0, math.squeeze(math.multiply(lambda, d)));
       var g_x1 = gradient(x1);
 
       var p = math.multiply(lambda, d);
@@ -60,6 +61,8 @@ _math.dfp = function(func, gradient, x0, n) {
       x0 = x1;
       g_x0 = g_x1;
       d_matrix = d_next;
+
+      console.log(x0.toString());
     }
   }
   return x0;

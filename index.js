@@ -40,6 +40,8 @@ var find_x = function(alpha) {
   var c = task.c(alpha);
 
   var f = function(x, y) {
+    if (x === 0) 
+      1;
     return math.add(math.multiply(a, y), c(x));
   }
   return _math.runge_kutta(f, task.timeStart, task.timeEnd, task.x0, task.timeN);
@@ -81,7 +83,5 @@ var _quality_diff = function(alpha) {
 }
 
 var main = function() {
-  return _math.gradient_descent(quality, quality_diff, 10, 100);
+  return _math.dfp(quality, quality_diff, 10, 50);
 }
-
-console.log(main());
