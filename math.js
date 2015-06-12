@@ -1,6 +1,7 @@
 
 var math = require('mathjs');
 var _math = {};
+var eps = 0.001;
 
 _math.golden_section = function(f, a, b, n) {
   var phi = 1.618;
