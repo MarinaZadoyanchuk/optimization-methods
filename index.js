@@ -33,15 +33,31 @@ var task2 = {
   alphaStart: 10
 };
 
-var task = task2;
+var task3 = {
+  a: function(alpha) {
+    var result = math.eye(4).toArray();
+    result[1][2] = alpha[0];
+    return result;
+  },
+  c: function(alpha) {
+    return function(t) {
+      return math.add(math.ones(4).toArray(), math.multiply(math.square(t), math.ones(4).toArray()));
+    }
+  },
+  timeStart: 0,
+  timeEnd: 1,
+  timeN: 20,
+  x0: math.ones(4).toArray(),
+  alphaStart: [10, 10]
+};
+
+var task = task3;
 
 var find_x = function(alpha) {
   var a = task.a(alpha);
   var c = task.c(alpha);
 
   var f = function(x, y) {
-    if (x === 0) 
-      1;
     return math.add(math.multiply(a, y), c(x));
   }
   return _math.runge_kutta(f, task.timeStart, task.timeEnd, task.x0, task.timeN);
@@ -62,14 +78,14 @@ var quality_diff = function(alpha) {
   }
   
   var f = function(x, y) {
-    return math.add(math.multiply(df_dx, y), [0, x_t[find_index(x)][2], 0, 0])
+    return math.add(math.multiply(df_dx, y), [0, 0, x_t[find_index(x)][2], 0])
   }
   var u = _math.runge_kutta(f, task.timeStart, task.timeEnd, math.zeros(task.x0.length), task.timeN)
   var result = 2 * _math.simpson(u.map(function(u_t, i) {
     return math.multiply(u_t, x_t[i]);
   }), (task.timeEnd - task.timeStart) / task.timeN);
   // console.log(alpha, result);
-  return result;
+  return [result, 0];
 }
 
 // var quality_diff = function(alpha)
@@ -83,5 +99,5 @@ var _quality_diff = function(alpha) {
 }
 
 var main = function() {
-  return _math.dfp(quality, quality_diff, 10, 50);
+  return _math.dfp(quality, quality_diff, task.alphaStart, 50);
 }
